@@ -1,9 +1,12 @@
 const express = require("express");
 const app = express();
 const { getAllTopics } = require("./controllers/topic.controllers");
+const { getEndpoints } = require("./controllers/endpoint.controller");
 const { handleCustomErrors } = require("./controllers/error.controllers");
 
 app.use(express.json());
+
+app.get("/api", getEndpoints);
 
 app.get("/api/topics", getAllTopics);
 
