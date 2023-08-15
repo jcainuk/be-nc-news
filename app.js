@@ -2,7 +2,10 @@ const express = require("express");
 const app = express();
 const { getAllTopics } = require("./controllers/topic.controllers");
 const { getEndpoints } = require("./controllers/endpoint.controller");
-const { getArticleById } = require("./controllers/article.controller");
+const {
+  getArticleById,
+  getAllArticles
+} = require("./controllers/article.controller");
 const {
   handleCustomErrors,
   handleError400s
@@ -15,6 +18,7 @@ app.get("/api", getEndpoints);
 app.get("/api/topics", getAllTopics);
 
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles", getAllArticles);
 
 app.use(handleError400s);
 app.use(handleCustomErrors);

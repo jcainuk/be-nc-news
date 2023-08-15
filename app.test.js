@@ -54,6 +54,45 @@ describe("/api/topics", () => {
   });
 });
 
+describe("/api/articles", () => {
+  describe("GET articles default", () => {
+    test("200: responds with an array appropriate articles sorted in descending date order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const { articles } = response.body;
+          console.log(articles, "<< inside the test");
+          expect(Array.isArray(articles)).toBe(true);
+          expect(articles).toBeSortedBy("created_at", {
+            descending: true
+          });
+        });
+    });
+    test("200: each article object should have the correct properties", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          const { articles } = response.body;
+
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(article).toHaveProperty("article_id");
+            expect(article).toHaveProperty("author");
+            expect(article).toHaveProperty("title");
+            expect(article).toHaveProperty("topic");
+            expect(article).toHaveProperty("created_at");
+            expect(article).toHaveProperty("votes");
+            expect(article).toHaveProperty("article_img_url");
+            expect(article).toHaveProperty("comment_count");
+            expect(article).not.toHaveProperty("body");
+          });
+        });
+    });
+  });
+});
+
 describe("/api/articles/:article_id", () => {
   describe("GET an article", () => {
     test("200: gets an article for an ID that exists", () => {
