@@ -62,7 +62,6 @@ describe("/api/articles", () => {
         .expect(200)
         .then((response) => {
           const { articles } = response.body;
-          console.log(articles, "<< inside the test");
           expect(Array.isArray(articles)).toBe(true);
           expect(articles).toBeSortedBy("created_at", {
             descending: true
@@ -123,6 +122,53 @@ describe("/api/articles/:article_id", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Article does not exist");
+        });
+    });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("get all comments for an article", () => {
+    test("200: sends an array of comments belonging to a single article to the client", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.comments).toEqual(expect.any(Array));
+          expect(Object.keys(response.body.comments[0])).toEqual(
+            expect.arrayContaining([
+              "comment_id",
+              "votes",
+              "created_at",
+              "author",
+              "body",
+              "article_id"
+            ])
+          );
+          response.body.comments.forEach((comment) => {
+            expect(comment.article_id).toBe(1);
+          });
+        });
+    });
+    test("200: article comments should be served in an array with the most recent comments first", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((response) => {
+          const { comments } = response.body;
+          expect(Array.isArray(comments)).toBe(true);
+          expect(comments).toBeSortedBy("created_at", {
+            descending: true
+          });
+        });
+    });
+
+    test("GET:404 sends an appropriate and error message when given a valid but non-existent id", () => {
+      return request(app)
+        .get("/api/articles/9000/comments")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("article does not exist");
         });
     });
   });

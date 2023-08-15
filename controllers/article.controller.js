@@ -1,6 +1,7 @@
 const {
   selectArticleById,
-  selectAllArticles
+  selectAllArticles,
+  selectCommentsByArticleId
 } = require("../models/article.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -17,6 +18,23 @@ exports.getArticleById = (req, res, next) => {
 exports.getAllArticles = (req, res, next) => {
   selectAllArticles()
     .then((articles) => res.status(200).send({ articles }))
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  selectCommentsByArticleId(article_id)
+    .then((article) => {
+      if (!article.length) {
+        return res.status(404).send({ msg: "article does not exist" });
+      }
+      return selectCommentsByArticleId(article_id);
+    })
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
     .catch((err) => {
       next(err);
     });
