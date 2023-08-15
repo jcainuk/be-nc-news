@@ -129,24 +129,21 @@ describe("/api/articles/:article_id", () => {
 
 describe("/api/articles/:article_id/comments", () => {
   describe("get all comments for an article", () => {
-    test("200: sends an array of comments belonging to a single article to the client", () => {
+    test("200: sends an array of comments with the correct properties belonging to a single article to the client", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
         .then((response) => {
-          expect(response.body.comments).toEqual(expect.any(Array));
-          expect(Object.keys(response.body.comments[0])).toEqual(
-            expect.arrayContaining([
-              "comment_id",
-              "votes",
-              "created_at",
-              "author",
-              "body",
-              "article_id"
-            ])
-          );
-          response.body.comments.forEach((comment) => {
-            expect(comment.article_id).toBe(1);
+          // Make changes
+          const { comments } = response.body;
+          expect(comments.length).toBe(11);
+          comments.forEach((comment) => {
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("votes", expect.any(Number));
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+            expect(comment).toHaveProperty("author", expect.any(String));
+            expect(comment).toHaveProperty("body", expect.any(String));
+            expect(comment).toHaveProperty("article_id", expect.any(Number));
           });
         });
     });
@@ -156,19 +153,27 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(200)
         .then((response) => {
           const { comments } = response.body;
-          expect(Array.isArray(comments)).toBe(true);
+          expect(comments.length).toBe(11);
           expect(comments).toBeSortedBy("created_at", {
             descending: true
           });
         });
     });
 
-    test("GET:404 sends an appropriate and error message when given a valid but non-existent id", () => {
+    test("GET 404: sends an appropriate and error message when given a valid but non-existent id", () => {
       return request(app)
         .get("/api/articles/9000/comments")
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("article does not exist");
+        });
+    });
+    test("400: responds with error when invalid id is input", () => {
+      return request(app)
+        .get("/api/articles/banana/comments")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
         });
     });
   });
