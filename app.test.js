@@ -62,7 +62,6 @@ describe("/api/articles", () => {
         .expect(200)
         .then((response) => {
           const { articles } = response.body;
-          console.log(articles, "<< inside the test");
           expect(Array.isArray(articles)).toBe(true);
           expect(articles).toBeSortedBy("created_at", {
             descending: true
@@ -123,6 +122,58 @@ describe("/api/articles/:article_id", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Article does not exist");
+        });
+    });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("get all comments for an article", () => {
+    test("200: sends an array of comments with the correct properties belonging to a single article to the client", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((response) => {
+          // Make changes
+          const { comments } = response.body;
+          expect(comments.length).toBe(11);
+          comments.forEach((comment) => {
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("votes", expect.any(Number));
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+            expect(comment).toHaveProperty("author", expect.any(String));
+            expect(comment).toHaveProperty("body", expect.any(String));
+            expect(comment).toHaveProperty("article_id", expect.any(Number));
+          });
+        });
+    });
+    test("200: article comments should be served in an array with the most recent comments first", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((response) => {
+          const { comments } = response.body;
+          expect(comments.length).toBe(11);
+          expect(comments).toBeSortedBy("created_at", {
+            descending: true
+          });
+        });
+    });
+
+    test("GET 404: sends an appropriate and error message when given a valid but non-existent id", () => {
+      return request(app)
+        .get("/api/articles/9000/comments")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("article does not exist");
+        });
+    });
+    test("400: responds with error when invalid id is input", () => {
+      return request(app)
+        .get("/api/articles/banana/comments")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
         });
     });
   });
