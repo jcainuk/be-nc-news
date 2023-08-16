@@ -129,12 +129,11 @@ describe("/api/articles/:article_id", () => {
 
 describe("/api/articles/:article_id/comments", () => {
   describe("get all comments for an article", () => {
-    test("200: sends an array of comments with the correct properties belonging to a single article to the client", () => {
+    test("GET 200: sends an array of comments with the correct properties belonging to a single article to the client", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
         .then((response) => {
-          // Make changes
           const { comments } = response.body;
           expect(comments.length).toBe(11);
           comments.forEach((comment) => {
@@ -147,7 +146,7 @@ describe("/api/articles/:article_id/comments", () => {
           });
         });
     });
-    test("200: article comments should be served in an array with the most recent comments first", () => {
+    test("GET 200: article comments should be served in an array with the most recent comments first", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
@@ -168,12 +167,107 @@ describe("/api/articles/:article_id/comments", () => {
           expect(response.body.msg).toBe("article does not exist");
         });
     });
-    test("400: responds with error when invalid id is input", () => {
+    test("GET 400: responds with error when invalid id is input", () => {
       return request(app)
         .get("/api/articles/banana/comments")
         .expect(400)
         .then((response) => {
           expect(response.body.msg).toBe("Bad request");
+        });
+    });
+  });
+
+  describe("add a comment for an article", () => {
+    test("POST 201: add a comment to an article and responds with the posted comment", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "butter_bridge",
+          body: "That article was so thought-provoking!"
+        })
+        .expect(201)
+        .then((response) => {
+          const { comment } = response.body;
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty(
+            "body",
+            "That article was so thought-provoking!"
+          );
+          expect(comment).toHaveProperty("votes", 0);
+          expect(comment).toHaveProperty("author", "butter_bridge");
+          expect(comment).toHaveProperty("article_id", 1);
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+        });
+    });
+
+    test("POST 400: responds with correct error when req body is missing username", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          body: "That article for so thought-provoking!"
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("POST 400: responds with correct error when req body is missing body", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "butter_bridge"
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("POST 400: responds with correct error when body contains wrong data type", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "butter_bridge",
+          body: 23
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("POST 400: responds with correct error when username contains wrong data type", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: 23,
+          body: "That article for so thought-provoking!"
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("400: responds with error when article_id is not in correct format", () => {
+      return request(app)
+        .post("/api/articles/apple/comments")
+        .send({
+          username: "butter_bridge",
+          body: "That article for so thought-provoking!"
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("404: responds with error when article_id does not exist", () => {
+      return request(app)
+        .post("/api/articles/9000/comments")
+        .send({
+          username: "butter_bridge",
+          body: "That article for so thought-provoking!"
+        })
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Article does not exist");
         });
     });
   });
