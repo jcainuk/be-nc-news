@@ -2,7 +2,6 @@ const { insertComment } = require("../models/comment.models");
 
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
-
   const { username, body } = req.body;
 
   if (typeof username !== "string" || typeof body !== "string") {
@@ -14,7 +13,6 @@ exports.postComment = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
-      console.log(err.code);
       next(err);
     });
 };
