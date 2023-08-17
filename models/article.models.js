@@ -30,21 +30,6 @@ exports.selectAllArticles = () => {
     });
 };
 
-exports.getCommentsByArticleId = (req, res, next) => {
-  const { article_id } = req.params;
-  selectArticleById(article_id)
-    .then((article) => {
-      if (!article) {
-        return res.status(404).send({ msg: "article does not exist" });
-      }
-      return selectCommentsByArticleId(article_id);
-    })
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch(next);
-};
-
 exports.selectCommentsByArticleId = (article_id) => {
   return db
     .query(
@@ -52,6 +37,12 @@ exports.selectCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({
+          status: 404,
+          msg: "Article does not exist"
+        });
+      }
       return result.rows;
     });
 };

@@ -24,5 +24,21 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "add a comment to an article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "username": "butter_bridge",
+          "body": "Massive intercranial brain haemorrhage",
+          "votes": 0,
+          "author": "icellusedkars",
+          "article_id": 1,
+          "created_at": 1583133000000
+        }
+      ]
+    }
   }
 }

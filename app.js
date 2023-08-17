@@ -7,6 +7,7 @@ const {
   getAllArticles,
   getCommentsByArticleId
 } = require("./controllers/article.controller");
+const { postComment } = require("./controllers/comment.controller");
 
 const {
   handleCustomErrors,
@@ -22,6 +23,7 @@ app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.use(handleError400s);
 app.use(handleCustomErrors);
