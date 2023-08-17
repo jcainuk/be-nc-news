@@ -75,5 +75,14 @@
         "comment_count": 6
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Delete a comment by comment_id",
+    "queries": [],
+    "exampleResponse": {},
+    "statusCodes": {
+      "204": "No content (successful deletion)",
+      "404": "Not Found (comment not found)"
+    }
   }
 }
