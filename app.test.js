@@ -164,7 +164,7 @@ describe("/api/articles/:article_id/comments", () => {
         .get("/api/articles/9000/comments")
         .expect(404)
         .then((response) => {
-          expect(response.body.msg).toBe("article does not exist");
+          expect(response.body.msg).toBe("Article does not exist");
         });
     });
     test("GET 400: responds with error when invalid id is input", () => {
