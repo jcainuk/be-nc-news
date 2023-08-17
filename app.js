@@ -5,7 +5,8 @@ const { getEndpoints } = require("./controllers/endpoint.controller");
 const {
   getArticleById,
   getAllArticles,
-  getCommentsByArticleId
+  getCommentsByArticleId,
+  patchArticle
 } = require("./controllers/article.controller");
 const { postComment } = require("./controllers/comment.controller");
 
@@ -21,6 +22,7 @@ app.get("/api", getEndpoints);
 app.get("/api/topics", getAllTopics);
 
 app.get("/api/articles/:article_id", getArticleById);
+app.patch("/api/articles/:article_id", patchArticle);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postComment);
