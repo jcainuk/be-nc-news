@@ -192,6 +192,24 @@ describe("/api/articles/:article_id", () => {
           expect(response.body.msg).toBe("Bad request");
         });
     });
+    test("POST 400: responds with correct error when request body contains wrong data type (STRING)", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: "apple" })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("POST 400: responds with correct error when request body contains wrong data type (BOOLEAN)", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: false })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
   });
 });
 
