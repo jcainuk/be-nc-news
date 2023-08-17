@@ -349,3 +349,32 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("delete the given comment by comment_id", () => {
+    test("DELETE 204: it should delete a comment when given its ID", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return request(app).get("/api/comments/1").expect(404);
+        });
+    });
+    test("400: responds with error when invalid id is input", () => {
+      return request(app)
+        .delete("/api/comments/apple")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("404: responds with error when id currently does not exist", () => {
+      return request(app)
+        .delete("/api/comments/9001")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Comment does not exist");
+        });
+    });
+  });
+});
