@@ -378,3 +378,32 @@ describe("/api/comments/:comment_id", () => {
     });
   });
 });
+
+describe("/api/users", () => {
+  describe("should get an array of all users", () => {
+    test("GET 200: sends an array of user objects with the correct properties", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          const { users } = response.body;
+          expect(Array.isArray(users)).toBe(true);
+        });
+    });
+    test("200: each user object should have the correct properties", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          const { users } = response.body;
+
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+          });
+        });
+    });
+  });
+});
