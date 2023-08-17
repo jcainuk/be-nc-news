@@ -75,5 +75,27 @@
         "comment_count": 6
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Delete a comment by comment_id",
+    "queries": [],
+    "exampleResponse": {},
+    "statusCodes": {
+      "204": "No content (successful deletion)",
+      "404": "Not Found (comment not found)"
+    }
+  },
+  "GET /api/users": {
+    "description": "Get all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "Maurice Moss",
+          "avatar_url": "https://example.com/avatar/butter_bridge.jpg"
+        }
+      ]
+    }
   }
 }
