@@ -101,11 +101,13 @@ describe("/api/articles/:article_id", () => {
           const { article } = response.body;
           expect(article).toHaveProperty("article_id", 1);
           expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.topic).toBe("string");
-          expect(typeof article.author).toBe("string");
-          expect(typeof article.body).toBe("string");
-          expect(typeof article.created_at).toBe("string");
+
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("body", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
         });
     });
     test("400: responds with error when invalid id is input", () => {
@@ -122,6 +124,72 @@ describe("/api/articles/:article_id", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Article does not exist");
+        });
+    });
+  });
+
+  describe("PATCH an article", () => {
+    test("200: it should be able to increase votes on an article by ID", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then((response) => {
+          const { article } = response.body;
+
+          expect(article).toHaveProperty("article_id", 1);
+          expect(typeof article.article_id).toBe("number");
+          expect(article).toHaveProperty("votes", 101);
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("body", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+        });
+    });
+    test("200: it should be able to reduce votes on an article by ID", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: -100 })
+        .expect(200)
+        .then((response) => {
+          const { article } = response.body;
+
+          expect(article).toHaveProperty("article_id", 1);
+          expect(typeof article.article_id).toBe("number");
+          expect(article).toHaveProperty("votes", 0);
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("body", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+        });
+    });
+    test("400: responds with error when invalid id is input", () => {
+      return request(app)
+        .patch("/api/articles/banana")
+        .send({ inc_votes: -100 })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("GET 404: sends an appropriate and error message when given a valid but non-existent id", () => {
+      return request(app)
+        .patch("/api/articles/9000")
+        .send({ inc_votes: 100 })
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Article does not exist");
+        });
+    });
+    test("400: responds with error when no votes are are included", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
         });
     });
   });
