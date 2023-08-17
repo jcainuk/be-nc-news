@@ -1,20 +1,21 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Serves up a JSON representation of all the available endpoints of the API"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Serves an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "Serves an array of all articles",
+    "queries": ["author", "topic", "sort_by", "order", "page", "limit"],
     "exampleResponse": {
       "articles": [
         {
+          "article_id": 1,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
@@ -25,20 +26,54 @@
       ]
     }
   },
-  "POST /api/articles/:article_id/comments": {
-    "description": "add a comment to an article",
+  "GET /api/articles/:article_id/comments": {
+    "description": "Get all comments for an article",
     "queries": [],
     "exampleResponse": {
       "comments": [
         {
-          "username": "butter_bridge",
-          "body": "Massive intercranial brain haemorrhage",
-          "votes": 0,
-          "author": "icellusedkars",
-          "article_id": 1,
-          "created_at": 1583133000000
+          "comment_id": 1,
+          "votes": 10,
+          "created_at": "2023-08-17T12:00:00.000Z",
+          "author": "butter_bridge",
+          "body": "This is a comment.",
+          "article_id": 1
         }
       ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Add a comment to an article",
+    "queries": [],
+    "requestBody": {
+      "description": "Object containing 'username' and 'body' fields"
+    },
+    "exampleResponse": {
+      "comment": {
+        "username": "butter_bridge",
+        "body": "Massive intercranial brain haemorrhage",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 1,
+        "created_at": 1583133000000
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Increase or decrease votes for an article",
+    "queries": [],
+    "requestBody": {
+      "description": "Object containing 'inc_votes' field (positive/negative integer)"
+    },
+    "exampleResponse": {
+      "updatedArticle": {
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 5,
+        "comment_count": 6
+      }
     }
   }
 }
