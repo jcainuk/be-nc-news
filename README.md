@@ -221,22 +221,30 @@ npm install
 
 Create two `.env` files for development and testing environments:
 
-1. Create a `.env.development` file in the project root and add the following:
+1. Create a .env.development file in the project root and add the following database name exactly how it appears in the setup.sql file:
 
 ```env
-PGDATABASE=your_dev_database_name
+PGDATABASE=nc_news
 
 
 ```
 
-2. Create a `.env.test` file in the project root and add the following:
+2. Create a .env.test file in the project root and add the following database name exactly how it appears in the setup.sql file:
 
 ```env
-PGDATABASE=your_test_database_name
+PGDATABASE=nc_news_test
 
 ```
 
-Please make sure to replace `your_dev_database_name` and `your_test_database_name` with your actual database and user credentials.
+For reference, the contents of the the setup.sql file are:
+
+```
+DROP DATABASE IF EXISTS nc_news_test;
+DROP DATABASE IF EXISTS nc_news;
+
+CREATE DATABASE nc_news_test;
+CREATE DATABASE nc_news;
+```
 
 ## Set Up Databases
 
