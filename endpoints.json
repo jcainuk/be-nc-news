@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "Serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order", "page", "limit"],
+    "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {

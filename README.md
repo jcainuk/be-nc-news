@@ -48,7 +48,19 @@ The API is built using Express and Node.js, with data stored in a PostgreSQL dat
 
 - `GET /api/articles`
 
-  - Description: Serves an array of all articles
+  - Description: This endpoint retrieves an array of all articles from the database. It allows the use of various query parameters to customize the results.
+
+  - `author`: Filters articles by a specific author's username.
+  - `topic`: Filters articles by a specific topic.
+  - `sort_by`: Sorts articles by a specified column (e.g., "title", "created_at").
+  - `order`: Specifies sorting order `asc` for ascending, `desc` for descending.
+
+  To retrieve a list of articles by a certain author sorted by title in ascending order:
+
+  ```
+  GET /api/articles?author=butter_bridge&sort_by=title&order=asc
+  ```
+
   - Example Response:
     ```json
     {
