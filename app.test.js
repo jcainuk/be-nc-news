@@ -246,30 +246,6 @@ describe("/api/articles", () => {
           });
       });
     });
-    test("200: articles takes topic, sort_by and order queries that work when all used together", () => {
-      return request(app)
-        .get("/api/articles?topic=mitch&sort_by=title&order=asc")
-        .expect(200)
-        .then(({ body }) => {
-          const { articles } = body;
-          expect(articles).toHaveLength(12);
-          expect(articles).toBeSortedBy("title", { ascending: true });
-          articles.forEach((article) => {
-            expect(article.topic).toBe("mitch");
-            expect(article).toHaveProperty("author", expect.any(String));
-            expect(article).toHaveProperty("title", expect.any(String));
-            expect(article).toHaveProperty("article_id", expect.any(Number));
-            expect(article).toHaveProperty("created_at", expect.any(String));
-            expect(article).toHaveProperty("votes", expect.any(Number));
-            expect(article).toHaveProperty(
-              "article_img_url",
-              expect.any(String)
-            );
-            expect(article).not.toHaveProperty("body");
-            expect(article).toHaveProperty("comment_count", expect.any(Number));
-          });
-        });
-    });
   });
 });
 

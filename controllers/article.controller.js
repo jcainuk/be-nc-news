@@ -29,20 +29,20 @@ exports.patchArticle = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
   const { topic, sort_by, order } = req.query;
-  const promises = [selectArticles(topic, sort_by, order)];
 
-  if (topic) {
-    promises.push(checkTopicExists(topic));
-  }
-
-  Promise.all(promises)
-    .then((resolvedPromises) => {
-      const articles = resolvedPromises[0];
-      return res.status(200).send({ articles });
+  selectArticles(topic, sort_by, order)
+    .then((articles) => {
+      if (topic) {
+        return checkTopicExists(topic)
+          .then(() => articles)
+          .catch(next);
+      }
+      return articles;
     })
-    .catch((err) => {
-      next(err);
-    });
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
