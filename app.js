@@ -15,8 +15,9 @@ const {
 const { getAllUsers } = require("./controllers/user.controller");
 
 const {
+  handleSqlErrors,
   handleCustomErrors,
-  handleError400s
+  handle500Errors
 } = require("./controllers/error.controllers");
 
 app.use(express.json());
@@ -33,12 +34,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postComment);
 app.get("/api/users", getAllUsers);
 
-app.use(handleError400s);
+app.use(handleSqlErrors);
 app.use(handleCustomErrors);
-
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ msg: "Internal server error" });
-});
+app.use(handle500Errors);
 
 module.exports = { app };

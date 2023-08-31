@@ -1,17 +1,26 @@
-const handleError400s = (err, req, res, next) => {
-  if (err.status === 400 || err.code === "22P02" || err.code === "23502") {
-    return res.status(400).send({ msg: "Bad request" });
+const handleSqlErrors = (error, request, response, next) => {
+  if (error.code === "22P02" || error.code === "23502") {
+    response.status(400).send({ msg: "Bad request" });
+  } else if (error.code === "23503") {
+    response.status(404).send({ msg: "Input value not found" });
+  } else if (error.code === "23505") {
+    response.status(400).send({ msg: "Slug already exists" });
+  } else {
+    next(error);
   }
-  next(err);
 };
 
-const handleCustomErrors = (err, req, res, next) => {
-  if (err.msg && err.status) {
-    return res.status(err.status).send({ msg: err.msg });
-  } else if (err.code === "23503") {
-    return res.status(404).send({ msg: "Article does not exist" });
+const handleCustomErrors = (error, request, response, next) => {
+  if (error.status && error.msg) {
+    response.status(error.status).send({ msg: error.msg });
+  } else {
+    next(error);
   }
-  next(err);
 };
 
-module.exports = { handleCustomErrors, handleError400s };
+const handle500Errors = (err, req, res, next) => {
+  console.log(err);
+  res.status(500).send({ msg: "Internal Server Error" });
+};
+
+module.exports = { handleSqlErrors, handleCustomErrors, handle500Errors };
