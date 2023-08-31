@@ -33,9 +33,7 @@ exports.getAllArticles = (req, res, next) => {
   selectArticles(topic, sort_by, order)
     .then((articles) => {
       if (topic) {
-        return checkTopicExists(topic)
-          .then(() => articles)
-          .catch(next);
+        return checkTopicExists(topic).then(() => articles);
       }
       return articles;
     })
