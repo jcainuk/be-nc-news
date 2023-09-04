@@ -17,35 +17,46 @@ exports.selectArticleById = (article_id) => {
 exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   const tableHeaders = [
     "article_id",
+    "title",
+    "topic",
     "author",
     "created_at",
     "votes",
     "article_img_url"
   ];
-  if (!tableHeaders.includes(sort_by)) {
+
+  if (
+    !tableHeaders.includes(sort_by) ||
+    (order !== "desc" && order !== "asc")
+  ) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  if (order !== "desc" && order !== "asc") {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
   const queryValues = [];
-
-  let baseSqlStringOne = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::integer AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `;
+  let baseSqlStringOne = `
+    SELECT
+      articles.author,
+      articles.title,
+      articles.article_id,
+      articles.topic,
+      articles.created_at,
+      articles.votes,
+      articles.article_img_url,
+      COUNT(comments.comment_id)::integer AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+  `;
 
   if (topic) {
     baseSqlStringOne += `WHERE articles.topic = $1 `;
     queryValues.push(topic);
   }
-  baseSqlStringOne += `GROUP BY articles.article_id `;
 
-  if (sort_by) {
-    baseSqlStringOne += `ORDER BY articles.${sort_by} `;
-  }
+  baseSqlStringOne += `
+    GROUP BY articles.article_id
+    ORDER BY articles.${sort_by} ${order}
+  `;
 
-  if (order) {
-    baseSqlStringOne += `${order}`;
-  }
   return db.query(baseSqlStringOne, queryValues).then((result) => {
     return result.rows;
   });
