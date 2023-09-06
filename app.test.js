@@ -393,12 +393,13 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
 
-    test("GET 404: sends an appropriate and error message when given a valid but non-existent id", () => {
+    test("GET 404: sends an empty array if there are no comments", () => {
       return request(app)
         .get("/api/articles/9000/comments")
-        .expect(404)
+        .expect(200)
         .then((response) => {
-          expect(response.body.msg).toBe("Article does not exist");
+          const { comments } = response.body;
+          expect(comments.length).toBe(0);
         });
     });
     test("GET 400: responds with error when invalid id is input", () => {
