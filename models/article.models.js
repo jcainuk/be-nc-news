@@ -53,11 +53,11 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   }
 
   baseSqlStringOne += `
-    GROUP BY articles.article_id
-    ORDER BY ${
-      sort_by === "comment_count" ? "comment_count" : `articles.${sort_by}`
-    } ${order}
-  `;
+  GROUP BY articles.article_id
+  ORDER BY ${
+    sort_by === "comment_count" ? "comment_count" : `articles.${sort_by}`
+  } ${order}
+`;
 
   return db.query(baseSqlStringOne, queryValues).then((result) => {
     return result.rows;
