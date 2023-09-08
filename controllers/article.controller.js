@@ -4,6 +4,7 @@ const {
   selectCommentsByArticleId,
   updateArticleVotes
 } = require("../models/article.models");
+const { getCommentCount } = require("../models/comment.models");
 const { checkTopicExists } = require("../models/topic.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -37,7 +38,30 @@ exports.getAllArticles = (req, res, next) => {
       }
       return articles;
     })
+    .then(async (articles) => {
+      for (const article of articles) {
+        article.comment_count = await getCommentCount(article.article_id);
+      }
+      res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+//
+exports.getAllArticles = (req, res, next) => {
+  const { topic, sort_by, order } = req.query;
+
+  selectArticles(topic, sort_by, order)
     .then((articles) => {
+      if (topic) {
+        return checkTopicExists(topic).then(() => articles);
+      }
+      return articles;
+    })
+    .then(async (articles) => {
+      for (const article of articles) {
+        article.comment_count = await getCommentCount(article.article_id);
+      }
       res.status(200).send({ articles });
     })
     .catch(next);

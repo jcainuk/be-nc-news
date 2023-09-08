@@ -30,3 +30,18 @@ exports.removeCommentById = (comment_id) => {
       }
     });
 };
+
+exports.getCommentCount = (articleId) => {
+  // Perform a database query to count comments for the given articleId
+  const query = `
+    SELECT COUNT(comment_id) AS comment_count
+    FROM comments
+    WHERE article_id = $1
+  `;
+  const values = [articleId];
+
+  return db.query(query, values).then((result) => {
+    const commentCount = parseInt(result.rows[0].comment_count, 10);
+    return commentCount;
+  });
+};
