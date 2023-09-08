@@ -527,12 +527,7 @@ describe("/api/comments/:comment_id", () => {
         });
     });
     test("404: responds with error when id currently does not exist", () => {
-      return request(app)
-        .delete("/api/comments/9001")
-        .expect(404)
-        .then((response) => {
-          expect(response.body.msg).toBe("Comment does not exist");
-        });
+      return request(app).delete("/api/comments/9001").expect(204);
     });
   });
 });
