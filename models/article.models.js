@@ -22,6 +22,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
     "author",
     "created_at",
     "votes",
+    "comment_count",
     "article_img_url"
   ];
 
